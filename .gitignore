@@ -2,3 +2,6 @@
 chromedriver_win32/chromedriver.exe
 *.chromedriver
 __pycache__/config.cpython-310.pyc
+config
+data.pickle
+result
