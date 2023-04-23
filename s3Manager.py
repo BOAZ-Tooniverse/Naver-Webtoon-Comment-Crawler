@@ -1,6 +1,6 @@
 import json 
 import boto3
-import logging
+from logger import Logger
 
 from config.s3_credential import  AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY, BUCKET_NAME
 
@@ -12,23 +12,8 @@ class S3Manager:
                         aws_access_key_id=AWS_ACCESS_KEY_ID,
                         aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
         self.bucket_name = BUCKET_NAME
-        self.logger = self.set_logging()
-
-
-    def set_logging(self) : 
-        logger = logging.getLogger('s3logger')
-        fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
-        fileHandler = logging.FileHandler(S3_LOG_FILE_PATH)
-        streamHandler = logging.StreamHandler()
-        
-        logger.addHandler(fileHandler)
-        logger.addHandler(streamHandler)
-        logger.setLevel(logging.DEBUG)
-        fileHandler.setFormatter(fomatter)
-        streamHandler.setFormatter(fomatter)
-        
-        logger.info("Complete to set S3 Logger")
-        return logger
+        self.logger = Logger('s3logger')
+        self.logger.set_file_and_stream_handler(S3_LOG_FILE_PATH)
 
 
     def save_json_to_s3(self, file_name: str, data): # json 객체 저장 

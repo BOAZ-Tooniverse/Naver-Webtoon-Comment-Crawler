@@ -12,7 +12,7 @@ import pandas as pd
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
 from crawlerError import CrawlerError
 import s3Manager
-import logging
+from logger import Logger
 import os
 
 from config.save_path import *
@@ -21,25 +21,10 @@ class NaverWebtoonCrawler :
     def __init__(self):
         self.create_directory(STORAGE_DIR)
         self.create_directory(LOG_STORAGE_DIR)
-        self.logger = self.set_logging()
+        self.logger = Logger('crawlerlogger')
+        self.logger.set_file_and_stream_handler(CRAWLER_LOG_FILE_PATH)
         self.s3_manager = s3Manager.S3Manager() 
         self.driver = self.create_chromedriver()
-
-
-    def set_logging(self) : 
-        logger = logging.getLogger('crawlerlogger')
-        fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
-        fileHandler = logging.FileHandler(CRAWLER_LOG_FILE_PATH)
-        streamHandler = logging.StreamHandler()
-        
-        logger.addHandler(fileHandler)
-        logger.addHandler(streamHandler)
-        logger.setLevel(logging.DEBUG)
-        fileHandler.setFormatter(fomatter)
-        streamHandler.setFormatter(fomatter)
-        
-        logger.info("Complete to set Crawler Logger")
-        return logger
 
 
     def create_chromedriver(self) :
@@ -211,7 +196,7 @@ class NaverWebtoonCrawler :
 
                 epi_best_comments[comment_uid] = comment_dict
         except Exception as e:    
-            self.logger.critical(f'Cannot get best comment in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no)) # 성인 웹툰 
+            self.logger.critical(f'Cannot get best comment in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no)) 
             raise CrawlerError(str(e), title_id, epi_no) from e
 
         self.logger.info(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
