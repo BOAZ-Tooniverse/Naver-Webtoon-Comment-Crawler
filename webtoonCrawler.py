@@ -198,9 +198,9 @@ class NaverWebtoonCrawler :
         except Exception as e:    
             self.logger.critical(f'Cannot get best comment in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no)) 
             raise CrawlerError(str(e), title_id, epi_no) from e
-
-        self.logger.info(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
-        return epi_best_comments
+        finally:
+            self.logger.info(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
+            return epi_best_comments
 
 
     def load_epi_best_comments(self, title_id : str, epi_no: str):
