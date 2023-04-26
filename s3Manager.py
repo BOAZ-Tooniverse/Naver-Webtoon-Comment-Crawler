@@ -20,7 +20,7 @@ class S3Manager:
         try:
             json_data = json.dumps(data).encode('UTF-8')
             response = self.s3.Object(self.bucket_name, file_name).put(Body=json_data)
-            self.logger.info(f"Successfully saved data to {file_name}")
+            self.logger.debug(f"Successfully saved data to {file_name}")
         except Exception as e:
             self.logger.error(f"Error saving data to {file_name}: {e}")
 
