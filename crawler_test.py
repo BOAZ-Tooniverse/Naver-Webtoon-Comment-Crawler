@@ -1,8 +1,13 @@
 from webtoonCrawler import NaverWebtoonCrawler
 import time
+from selenium.webdriver.common.by import By
 
 def test_crawler_init():
     crawler = NaverWebtoonCrawler()
+    url = 'https://m.comic.naver.com/webtoon/weekday?sort=ALL_READER&week=mon'
+    crawler.driver.get(url)
+    webtoon_list  = crawler.driver.find_elements(by=By.CSS_SELECTOR, value='#ct > div.section_list_toon > ul > li')
+    print(webtoon_list[0].text)
 
 '''
 TEST #1 : 주간 웹툰 titlID URL 저장 및 불러오기
@@ -90,7 +95,7 @@ def test_load_epi_best_comments():
 
 if __name__ == "__main__" : 
     # TEST #0
-    # test_crawler_init() # OK
+    test_crawler_init() # OK
 
     # TEST #1
     # test_get_and_save_weekly_toonURL() # OK
@@ -102,5 +107,5 @@ if __name__ == "__main__" :
 
     # TEST #3
     # test_get_save_total_epi_best_comments()
-    test_get_one_epi_best_comments()  
+    # test_get_one_epi_best_comments() 
     # test_load_epi_best_comments() # Ok
