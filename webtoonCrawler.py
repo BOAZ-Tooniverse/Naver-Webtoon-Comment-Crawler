@@ -31,15 +31,19 @@ class NaverWebtoonCrawler :
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299"
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option('excludeSwitches', ["enable-logging"])
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('user-agent=' + user_agent)
 
         try:
             driver = webdriver.Chrome(options=chrome_options)
         except WebDriverException as e:
-            self.logger.error(f"Error while creating chromedriver: {e}")
+            print(f"Error while creating chromedriver: {e}")
             driver = None
         
-        self.logger.info("Complete to create chromedriver")
+        print("Complete to create chromedriver")
         return driver
 
 
@@ -47,9 +51,9 @@ class NaverWebtoonCrawler :
         try:
             if not os.path.exists(directory):
                 os.makedirs(directory)
-                self.logger.info("Complete to create directory")
+                print("Complete to create directory")
         except OSError:
-            self.logger.error("Error: Failed to create the directory.")
+                print("Error: Failed to create the directory.")
 
 
     def get_toonURL_by_day(self, day:str) -> list: # 메인 홈에서 웹툰 titlID URL 수집
@@ -300,6 +304,6 @@ class NaverWebtoonCrawler :
                 file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
                 result = self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
                 time.sleep(1.0)
-            time.sleep(1.5)
+            time.sleep(1.2)
         
         self.driver.quit()
