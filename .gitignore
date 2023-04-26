@@ -6,3 +6,4 @@ config
 result
 prev_result
 logs
+requirements.txt
