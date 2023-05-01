@@ -38,7 +38,7 @@ class NaverWebtoonCrawler :
         chrome_options.add_argument('user-agent=' + user_agent)
 
         try:
-            driver = webdriver.Chrome(options=chrome_options)
+            driver = webdriver.Chrome(CHROME_DRIVER_PATH, options=chrome_options)
         except WebDriverException as e:
             print(f"Error while creating chromedriver: {e}")
             driver = None
@@ -183,7 +183,7 @@ class NaverWebtoonCrawler :
                 write_date = item.find_element(by=By.CLASS_NAME, value='u_cbox_date').get_attribute('data-value')
                 save_date = str(datetime.now().timestamp())
                 is_best = True
-                comment_uid = str(title_id) + str(epi_no) + '_' + str(login_id)[:4]  # 고유 값
+                comment_uid = item.get_attribute('data-info') # 고유 값
 
                 comment_dict = {}
                 comment_dict['title_id'] = title_id
