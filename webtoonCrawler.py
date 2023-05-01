@@ -214,7 +214,7 @@ class NaverWebtoonCrawler :
             self.logger.critical(f'Cannot get best comment in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no)) 
             raise CrawlerError(str(e), title_id, epi_no) from e
         finally:
-            self.logger.info(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
+            self.logger.debug(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
             return epi_best_comments
 
 
@@ -294,14 +294,14 @@ class NaverWebtoonCrawler :
         # 0. WebDriver 생성 -> __init__ 으로 변경
 
         # 1. 요일별 toonURL 가려와서 pickle에 저장
-        self.get_and_save_weekly_toonURL()
+        # self.get_and_save_weekly_toonURL()
 
         # 2-. 최종 웹툰 url 리스트 객체 불러오기 (pickle) -> 함수화 load_weekly_toonURL()
-        weekly_toonURL = self.load_weekly_toonURL()
+        # weekly_toonURL = self.load_weekly_toonURL()
 
         # 2. 웹툰 별 url 접속하여 정보 가져와 csv에 저장 (성인 웹툰 제외) -> 함수화 save_toon_info_csv()
-        total_toon_info = self.get_weekly_toon_info(weekly_toonURL)
-        self.save_weekly_toon_info_csv(total_toon_info)
+        # total_toon_info = self.get_weekly_toon_info(weekly_toonURL)
+        # self.save_weekly_toon_info_csv(total_toon_info)
 
         # 3. 위에서 저장한 데이터 불러오기 -> 함수화  load_total_toon_info()
         df = self.load_total_toon_info()
@@ -309,12 +309,17 @@ class NaverWebtoonCrawler :
         epi_cnt_list =  df["episode_count"] 
         
         # 4. 웹툰 별 회차별 url 접속하여 best 댓글 가져오기
-        for title_id, epi_cnt in zip(title_id_list, epi_cnt_list): 
+        idx = 0
+        while idx < len(title_id_list):
+            title_id = str(title_id_list[idx])
+            epi_cnt = epi_cnt_list[idx]
+            self.logger.info(f'Start to get_epi_best_comments [epi : {title_id}]')
+            time.sleep(0.1)
             for epi_no in range(1, epi_cnt + 1) :
                 epi_best_comments = self.get_epi_best_comments(title_id, epi_no)
                 file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
                 result = self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
-                time.sleep(1.0)
-            time.sleep(1.2)
-        
+                time.sleep(1)
+            idx += 1
+
         self.driver.quit()
