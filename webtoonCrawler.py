@@ -172,6 +172,17 @@ class NaverWebtoonCrawler :
 
             epi_best_comments = {}
 
+            # Turn Off CleanBot
+            btn_cleanbot = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#cbox_module > div > div.u_cbox_cleanbot > a')))
+            btn_cleanbot.click()
+            time.sleep(0.2) 
+            btn_turnOff = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#cleanbot_dialog_checkbox_cbox_module')))
+            btn_turnOff.click()
+            time.sleep(0.2) 
+            btn_check = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body > div.u_cbox.u_cbox_layer_wrap > div > div.u_cbox_layer_cleanbot2 > div.u_cbox_layer_cleanbot2_extra > button')))
+            btn_check.click()
+            time.sleep(0.3)
+
             list_comment = self.driver.find_elements(by=By.CSS_SELECTOR, value='#cbox_module_wai_u_cbox_content_wrap_tabpanel > ul > li')
             for item in list_comment : 
                 comment = item.find_element(by=By.CLASS_NAME, value='u_cbox_contents').text
