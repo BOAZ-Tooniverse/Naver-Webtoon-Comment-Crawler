@@ -1,7 +1,7 @@
 # Naver-Webtoon-Comment-Crawler
 
 # 개요 
-- 크롤링할 사이트 : 네이버웹툰 모바일 (https://m.comic.naver.com)
+- 크롤링할 사이트 : 네이버웹툰 (https://comic.naver.com)
 - 목표 : 
     1. 모든 웹툰의 titleId을 포함한 웹툰 연재 정보 저장
     2. 웹툰 별 회차별로 접근하여 댓글 크롤링 후 저장  
@@ -9,6 +9,7 @@
 
 <br><br>
 
+<!-- 
 # 상세 정보
 ## 📌 1. 요일별 웹툰 조회 
 아래는 요일별로 인기순 정렬하는 URL이다. (월-일)  
@@ -20,6 +21,7 @@ https://m.comic.naver.com/webtoon/weekday?sort=ALL_READER&week=fri
 https://m.comic.naver.com/webtoon/weekday?sort=ALL_READER&week=sat
 https://m.comic.naver.com/webtoon/weekday?sort=ALL_READER&week=sun
 
+<!-- 
 ### ✅ sort 옵션 
 - `ALL_READER` 인기순 (디폴트)
 - `FEMALE_READER` 여성 인기순
@@ -45,4 +47,4 @@ https://m.comic.naver.com/webtoon/list?titleId=807831 와 같이 파라미터 ti
 - genre : 에피소드
 - genre_detail : 개그
 - week_days : ['화']
-- episode_count : 50
+- episode_count : 50 -->
