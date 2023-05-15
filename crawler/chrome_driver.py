@@ -39,6 +39,7 @@ class ChromeDriver:
             self.logger.error(f"Failed to create ChromeDriver: {str(e)}")
             self.driver = None
             self.service = None
+        return self.driver
 
     def __del__(self):
         if self.driver:
