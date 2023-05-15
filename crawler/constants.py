@@ -1,1 +1,0 @@
-WEEK_TOONURL="https://m.comic.naver.com/webtoon/weekday?sort=ALL_READER&week="
