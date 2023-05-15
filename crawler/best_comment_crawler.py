@@ -58,7 +58,7 @@ class BestCommentCrawler :
                 write_date = item.find_element(by=By.CLASS_NAME, value='u_cbox_date').get_attribute('data-value')
                 save_date = str(datetime.now().timestamp())
                 is_best = True
-                comment_uid = item.get_attribute('data-info') # 고유 값
+                comment_uid = item.get_attribute('data-info').split("'")[1]
 
                 comment_dict = {}
                 comment_dict['title_id'] = title_id
