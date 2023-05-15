@@ -5,7 +5,7 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from logger.crawler_logger import CrawlerLogger
 from error.crawler_error import CrawlerError
 from config.save_path import BEST_COMMENT_LOG_FILE
@@ -47,7 +47,7 @@ class BestCommentCrawler :
             time.sleep(0.5)
 
             # Get Best Comments
-            list_comment = self.driver.get_driver().find_elements(by=By.CSS_SELECTOR, value='#cbox_module_wai_u_cbox_content_wrap_tabpanel > ul > li')
+            list_comment = WebDriverWait(self.driver.get_driver(), 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#cbox_module_wai_u_cbox_content_wrap_tabpanel > ul > li')))            
             for item in list_comment : 
                 comment = item.find_element(by=By.CLASS_NAME, value='u_cbox_contents').text
                 nickname  = item.find_element(by=By.CLASS_NAME, value='u_cbox_nick').text
@@ -74,7 +74,12 @@ class BestCommentCrawler :
                 comment_dict['is_best'] = is_best
 
                 epi_best_comments[comment_uid] = comment_dict
-        # <<TODO>> 예외 처리 자세히 
+        except TimeoutException as e:
+            self.logger.critical(f'TimeoutException: {str(e)}. Cannot get best comment in {title_id}/{epi_no}')
+            raise CrawlerError(str(e), title_id, epi_no) from e
+        except NoSuchElementException as e:
+            self.logger.critical(f'NoSuchElementException: {str(e)}. Cannot get best comment in {title_id}/{epi_no}')
+            raise CrawlerError(str(e), title_id, epi_no) from e 
         except Exception as e:    
             self.logger.critical(f'Cannot get best comment in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no)) 
             raise CrawlerError(str(e), title_id, epi_no) from e
@@ -87,14 +92,14 @@ class BestCommentCrawler :
         """
         모든 웹툰의 회차 별 best 댓글들을 저장한 json파일을 s3에 저장하는 함수
         """
-        idx = 0
+        idx = 1
         while idx < len(title_id_list):
             title_id = str(title_id_list[idx])
             epi_cnt = epi_cnt_list[idx]
             self.logger.info(f'Start to get_epi_best_comments [titleID : {title_id}]')
             for epi_no in range(1, epi_cnt + 1) :
                 epi_best_comments = self.get_epi_best_comments(title_id, epi_no)
-                file_name = 'test/{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
+                file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
                 self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
                 time.sleep(0.3)
             idx += 1
@@ -103,7 +108,7 @@ class BestCommentCrawler :
         """
         특정 회차의 best 댓글들을 저장한 json파일을 s3에서 불러오는 함수
         """
-        file_name = 'test/{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
+        file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
         json_result = self.s3_manager.load_json_from_s3(file_name)
         self.logger.info("Complete to load_epi_best_comments")
         return json_result
