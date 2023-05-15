@@ -4,10 +4,7 @@ from slack_sdk.errors import SlackApiError
 from config.save_path import ERROR_BEST_COMMENTS_TXT_FILE
 from config.slack_credential import SLACK_API_TOKEN, CHANNEL_NAME
 
-
 class CrawlerError(Exception):
-
-    
     def __init__(self, message, title_id=None, epi_no=None):
         super().__init__(message)
         self.title_id = title_id
