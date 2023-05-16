@@ -44,6 +44,9 @@ def all_steps():
     best_comment_crawler.get_and_save_all_best_comments(title_id_list=total_toon_info_df["title_id"], epi_cnt_list=total_toon_info_df["episode_count"])
 
 def get_best_comments():
+    """
+    모든 웹툰의 모든 회차의 best 댓글을 수집하는 함수
+    """
     # 0. 디렉토리 생성
     create_directory(STORAGE_DIR)
     create_directory(LOG_STORAGE_DIR)
@@ -56,5 +59,21 @@ def get_best_comments():
     best_comment_crawler = BestCommentCrawler()
     best_comment_crawler.get_and_save_all_best_comments(title_id_list=total_toon_info_df["title_id"], epi_cnt_list=total_toon_info_df["episode_count"])
 
+def get_best_comments_from_title_id(titld_id: str, epi_no : int):
+    """
+    특정 웹툰의 특정 회차 부터 best 댓글을 수집하는 함수
+    """
+    # 0. 디렉토리 생성
+    create_directory(STORAGE_DIR)
+    create_directory(LOG_STORAGE_DIR)
+
+    # 1. 위에서 저장한 데이터 불러오기 
+    tooninfo_crawler = WeeklyToonInfoCrawler()
+    total_toon_info_df = tooninfo_crawler.load_total_tooninfo()
+    
+    # 2. 웹툰 별 회차별 url 접속하여 best 댓글 가져오기
+    best_comment_crawler = BestCommentCrawler()
+    best_comment_crawler.get_and_save_comments_from_title_id(title_id_list=total_toon_info_df["title_id"].values.tolist(), epi_cnt_list=total_toon_info_df["episode_count"].values.tolist(), start_titld_id=titld_id, epi_no=epi_no)
+
 if __name__ == "__main__" : 
-    get_best_comments()
+    get_best_comments_from_title_id(745654,82)
