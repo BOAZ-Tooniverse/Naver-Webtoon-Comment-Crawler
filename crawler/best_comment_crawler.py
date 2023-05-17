@@ -121,7 +121,7 @@ def get_and_save_comments_from_title_id(self, title_id_list : List, epi_cnt_list
                 time.sleep(0.2)
             idx += 1
 
-    def load_epi_best_comments(self, title_id : str, epi_no: str):
+def load_epi_best_comments(self, title_id : str, epi_no: str):
         """
         특정 회차의 best 댓글들을 저장한 json파일을 s3에서 불러오는 함수
         """
