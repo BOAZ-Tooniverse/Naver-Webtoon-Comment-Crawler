@@ -165,3 +165,4 @@ __pycache__
 config
 result
 logs
+nohup.out
