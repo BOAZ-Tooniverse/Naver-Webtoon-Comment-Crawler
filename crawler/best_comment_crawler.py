@@ -22,7 +22,7 @@ class BestCommentCrawler :
         self.driver = ChromeDriver()
         self.s3_manager = S3Manager() 
 
-    def get_epi_best_comments(self, title_id: str, epi_no: str) -> dict:
+    def get_epi_best_comments(self, title_id: str, epi_no: str) -> List:
         """
         특정 회차의 best 댓글들을 크롤링하는 함수
         """
@@ -30,7 +30,7 @@ class BestCommentCrawler :
 
         try: 
             episode_url = 'https://comic.naver.com/webtoon/detail?titleId={tid}&no={epi}'.format(tid=title_id, epi=epi_no)
-            epi_best_comments = {}
+            epi_best_comments = []
             
             self.driver.start()
             self.driver.get_driver().get(episode_url)
@@ -61,6 +61,7 @@ class BestCommentCrawler :
                 comment_uid = item.get_attribute('data-info').split("'")[1]
 
                 comment_dict = {}
+                comment_dict['comment_id'] = comment_uid
                 comment_dict['title_id'] = title_id
                 comment_dict['epi_no'] = epi_no
                 comment_dict['login_id'] = login_id
@@ -73,7 +74,7 @@ class BestCommentCrawler :
                 comment_dict['save_date'] = save_date
                 comment_dict['is_best'] = is_best
 
-                epi_best_comments[comment_uid] = comment_dict
+                epi_best_comments.append(comment_dict)
         except TimeoutException as e:
             self.logger.critical(f'TimeoutException: {str(e)}. Cannot get best comment in {title_id}/{epi_no}')
             raise CrawlerError(str(e), title_id, epi_no) from e
