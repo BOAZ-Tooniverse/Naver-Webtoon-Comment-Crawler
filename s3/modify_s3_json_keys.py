@@ -1,6 +1,7 @@
 import boto3
 import json
 import copy
+from crawler.weekly_tooninfo_crawler import *
 from config.s3_credential import  AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY, BUCKET_NAME
 
 def modify_s3_json_keys() :
@@ -52,4 +53,35 @@ def modify_s3_json_keys() :
                 # 변경된 JSON 데이터를 S3에 다시 저장
                 new_file_content = json.dumps(json_data)
                 s3_client.put_object(Body=new_file_content, Bucket=BUCKET_NAME, Key=file_key)
-            
+
+def modify_s3_json_schema(end_title_id : int) :
+    tooninfo_crawler = WeeklyToonInfoCrawler()
+    total_toon_info_df = tooninfo_crawler.load_total_tooninfo()
+    title_id_list = total_toon_info_df["title_id"].values.tolist()
+    end_idx = title_id_list.index(end_title_id)
+
+    session = boto3.Session(
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    )
+
+    s3_client = session.client('s3')
+
+    for i in range(0,end_idx+1):
+        folder = str(title_id_list[i])
+        response = s3_client.list_objects_v2(Bucket=BUCKET_NAME, Prefix=folder)
+        # 파일 하나씩 가져옴
+        for obj in response['Contents']: 
+            file_key = obj['Key']
+            if file_key.endswith('.json'): 
+                file_obj = s3_client.get_object(Bucket=BUCKET_NAME, Key=file_key)
+                file_content = file_obj['Body'].read().decode('utf-8')
+                json_data = json.loads(file_content)
+                result = []
+                # 스키마 변경
+                for key, value in json_data.items():
+                    if value != '{}': 
+                        result.append({'comment_id': key, **value})
+                # save
+                new_file_content = json.dumps(result)
+                s3_client.put_object(Body=new_file_content, Bucket=BUCKET_NAME, Key=file_key)
