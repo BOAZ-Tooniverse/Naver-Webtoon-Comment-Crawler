@@ -87,7 +87,7 @@ class BestCommentCrawler :
         finally:
             self.logger.debug(f'Complete to get_epi_best_comments in {title_id}/{epi_no}'.format(title_id=title_id, epi_no=epi_no))
             self.driver.stop()
-        return epi_best_comments
+            return epi_best_comments
 
     def get_and_save_all_best_comments(self, title_id_list : List, epi_cnt_list: List):
         """
@@ -105,7 +105,7 @@ class BestCommentCrawler :
                 time.sleep(0.2)
             idx += 1
 
-def get_and_save_comments_from_title_id(self, title_id_list : List, epi_cnt_list: List, start_titld_id: str):
+    def get_and_save_comments_from_title_id(self, title_id_list : List, epi_cnt_list: List, start_titld_id: str):
         """
         특정 웹툰의 특정 회차부터 best 댓글들을 저장한 json파일을 s3에 저장하는 함수
         """
@@ -116,12 +116,13 @@ def get_and_save_comments_from_title_id(self, title_id_list : List, epi_cnt_list
             self.logger.info(f'[{idx}/{len(title_id_list)}]Start to get_epi_best_comments from [titleID : {title_id} epi_cnt : {epi_cnt}]')
             for epi_no in range(1, epi_cnt + 1) :
                 epi_best_comments = self.get_epi_best_comments(title_id, epi_no)
-                file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
-                self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
+                if epi_best_comments : 
+                    file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
+                    self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
                 time.sleep(0.2)
             idx += 1
 
-def load_epi_best_comments(self, title_id : str, epi_no: str):
+    def load_epi_best_comments(self, title_id : str, epi_no: str):
         """
         특정 회차의 best 댓글들을 저장한 json파일을 s3에서 불러오는 함수
         """
