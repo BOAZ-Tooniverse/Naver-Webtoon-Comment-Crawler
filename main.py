@@ -76,4 +76,4 @@ def get_best_comments_from_title_id(titld_id: str):
     best_comment_crawler.get_and_save_comments_from_title_id(title_id_list=total_toon_info_df["title_id"].values.tolist(), epi_cnt_list=total_toon_info_df["episode_count"].values.tolist(), start_titld_id=titld_id)
 
 if __name__ == "__main__" : 
-    get_best_comments_from_title_id(745654)
+    get_best_comments_from_title_id(765804)
