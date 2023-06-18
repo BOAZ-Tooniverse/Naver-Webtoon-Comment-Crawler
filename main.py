@@ -2,7 +2,7 @@ import os
 from crawler.weekly_tooninfo_crawler import *
 from crawler.weekly_toonurl_crawler import *
 from crawler.best_comment_crawler import *
-from config.save_path import STORAGE_DIR, LOG_STORAGE_DIR
+from config.save_path import STORAGE_DIR, LOG_STORAGE_DIR, ERROR_BEST_COMMENTS_TXT_FILE_ALL
 
 def create_directory(directory):
         try:
@@ -75,5 +75,27 @@ def get_best_comments_from_title_id(titld_id: str):
     best_comment_crawler = BestCommentCrawler()
     best_comment_crawler.get_and_save_comments_from_title_id(title_id_list=total_toon_info_df["title_id"].values.tolist(), epi_cnt_list=total_toon_info_df["episode_count"].values.tolist(), start_titld_id=titld_id)
 
+def get_error_best_comments():
+    """
+    수집 시 에러난 회차 재수집
+    """
+    # 0. 에러난 회차 정보 불러오기
+    title_epi_list = []
+
+    for error_best_file in ERROR_BEST_COMMENTS_TXT_FILE_ALL:
+        with open(error_best_file, "r") as file:
+            for line in file:
+                line = line.strip()
+                if line:
+                    title_id, epi_no = line.split("/")
+                    title_id = title_id.strip()
+                    epi_no = int(epi_no.strip())
+                    title_epi_list.append((title_id, epi_no))
+
+    # 1. erorr난 best 댓글 재수집 
+    best_comment_crawler = BestCommentCrawler()
+    best_comment_crawler.get_and_save_best_comments_from_each(title_epi_list)
+
+
 if __name__ == "__main__" : 
-    get_best_comments_from_title_id(765804)
+    get_error_best_comments()
