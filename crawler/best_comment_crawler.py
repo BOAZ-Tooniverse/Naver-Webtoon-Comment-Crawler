@@ -142,6 +142,5 @@ class BestCommentCrawler :
             print(epi_best_comments)
             if epi_best_comments : 
                 file_name = '{title_id}/{title_id}_{epi_no}_best.json'.format(title_id=title_id,epi_no=epi_no)
-                # self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
+                self.s3_manager.save_json_to_s3(file_name, epi_best_comments)
             cnt += 1
-            break
